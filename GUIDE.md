@@ -30,7 +30,7 @@ Official reference: [Maroo Testnet access](https://docs.maroo.io/resources/netwo
 ## 3. Get the source and install dependencies
 
 ```bash
-git clone https://github.com/REPLACE_WITH_REPOSITORY_OWNER/maroo-testnet-policy-lab.git
+git clone https://github.com/vlsss12/maroo-testnet-policy-lab.git
 cd maroo-testnet-policy-lab
 npm install
 ```
