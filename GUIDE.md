@@ -79,8 +79,8 @@ Read these official references before continuing:
 
 1. [PCL dual-track transaction model](https://docs.maroo.io/concepts/compliance/pcl-dual-track-model)
 2. [`IPcl.deployPclProxy`](https://docs.maroo.io/apis/contract/contract-pcl-deploy-pcl-proxy)
-3. [`IPcl.changeContractPolicies`](https://docs.maroo.io/apis/contract/pcl-update-contract-policy)
-4. The specific policy template documentation, such as [`DENYLIST_POLICY`](https://docs.maroo.io/concepts/compliance/denylist-policy)
+3. [`IPcl.policyTemplate`](https://docs.maroo.io/apis/contract/pcl-get-policy-template)
+4. [`IPcl.changeContractPolicies`](https://docs.maroo.io/apis/contract/pcl-update-contract-policy)
 
 The documented Transparent proxy flow is broadly:
 
@@ -88,7 +88,7 @@ The documented Transparent proxy flow is broadly:
 2. Encode Transparent proxy initialization data as `abi.encode(logicAddress, initialOwner, initializerCalldata)`. If no initializer is needed, the docs specify `0x` for the initializer calldata.
 3. Run `npm run deploy:pcl` to simulate and submit `deployPclProxy(Transparent, 0, initData)` on Maroo Testnet. The script uses the documented `abi.encode(logic, initialOwner, initializer)` tuple, with the deployer as `initialOwner` and a no-op initializer. The docs state the immediate caller becomes the initial policy admin.
 4. Read `pclProxy(proxyAddress)` and confirm the returned `kind`, `admin`, and `proxy` match what you expect. Stop if the call reverts or the registry entry is missing.
-5. For a demonstration denylist, set `CONTRACT_ADDRESS` to the verified proxy and `DENIED_TEST_ADDRESS` to a disposable test identity, then run `npm run configure:denylist`. This submits the documented `DENYLIST_POLICY` payload at contract scope. Policy configuration can be replaced by the current admin, so protect that key. Verify the stored policy independently before proceeding.
+5. For a demonstration denylist, set `CONTRACT_ADDRESS` to the verified proxy and `DENIED_TEST_ADDRESS` to a disposable test identity, then run `npm run configure:denylist`. The script first reads `policyTemplate("DENYLIST_POLICY")`, checks the registry/admin, and simulates the policy update before submitting it. Policy configuration can be replaced by the current admin, so protect that key. Verify the stored policy independently before proceeding.
 6. Use `eth_call` to preflight the exact user call through the proxy. Then test both an allowed and a deliberately denied case using disposable test accounts.
 7. Only after both preflight cases make sense, consider sending the test transaction. Inspect the wallet prompt and verify the transaction on Explorer. Any submitted transaction publicly links the signing wallet to its activity.
 
