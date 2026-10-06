@@ -2,7 +2,7 @@
 
 A small, reproducible builder project for learning Maroo Testnet: deploy a Solidity activity contract, record an on-chain action, and then explore how Maroo's Programmable Compliance Layer (PCL) regulated path differs from a direct EVM call.
 
-> **Status:** The simple activity contract was deployed and called on Maroo Testnet during the original experiment. A PCL proxy deployment was also attempted, but reverted. This repository does not claim that the PCL flow was successfully deployed or verified end to end.
+> **Status:** An earlier minimal activity-contract revision was deployed during the original experiment. On 2026-10-06, the current repository source was also deployed and `recordActivity(1)` was confirmed once on Maroo Testnet. A PCL proxy deployment was attempted but reverted; this repository does not claim that the PCL flow was successfully deployed or verified end to end.
 
 This is an independent educational project, not an official Maroo repository. It does not promise points, an airdrop, token allocation, or any reward. Testnet tokens have no monetary value.
 
@@ -72,7 +72,7 @@ After installing the policy, set `DENIED_TEST_KEY` to the local-only key matchin
 
 - No wallet address, personal name, or personal email is embedded in this repository.
 - `.env` is ignored by Git. Never paste a private key, seed phrase, or wallet export into an issue, commit, screenshot, or shared guide.
-- The original experiment's contract address and transaction hashes are intentionally omitted: public explorer links can reveal the originating wallet.
+- Wallet, contract, and transaction identifiers are omitted from repository status notes because public explorer links can reveal the originating wallet.
 - This contract is a tutorial artifact, not production software. It has no access control and should not hold funds.
 - Review every wallet prompt. Stop if the network, destination, calldata, or value is unexpected.
 
