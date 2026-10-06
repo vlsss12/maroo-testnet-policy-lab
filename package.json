@@ -14,6 +14,7 @@
     "deploy": "npm run compile && node scripts/deploy.mjs",
     "deploy:pcl": "npm run compile && node scripts/deploy-pcl-proxy.mjs",
     "configure:denylist": "node scripts/configure-denylist.mjs",
+    "verify:pcl": "node scripts/verify-pcl-policy.mjs",
     "record": "node scripts/record-activity.mjs"
   },
   "dependencies": {
