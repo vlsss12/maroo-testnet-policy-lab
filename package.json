@@ -1,0 +1,21 @@
+{
+  "name": "maroo-testnet-policy-lab",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Educational Maroo Testnet activity contract and PCL learning guide",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "compile": "node scripts/compile.mjs",
+    "deploy": "npm run compile && node scripts/deploy.mjs",
+    "record": "node scripts/record-activity.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "ethers": "^6.15.0",
+    "solc": "^0.8.30"
+  }
+}
