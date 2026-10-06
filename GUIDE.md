@@ -4,12 +4,12 @@ This guide reproduces a minimal Maroo Testnet smart-contract experiment and then
 
 ## 1. Understand what you are building
 
-The demo contract stores a counter and emits an `Activity` event when `recordActivity(value)` is called. It is intentionally tiny so that deployment and event verification are easy to inspect.
+The current teaching contract stores an aggregate counter, counts calls per caller, rejects a zero value, and emits an `Activity` event with a per-caller sequence. It is intentionally small so deployment and event verification are easy to inspect. It is not a points system and does not establish reward eligibility. The historical testnet deployment used the earlier minimal contract revision; do not assume its bytecode matches the current source.
 
 There are two different stages:
 
 1. **Verified in the original experiment:** direct deployment of the simple activity contract and a successful call to its activity method on Maroo Testnet.
-2. **Not yet verified:** wrapping an implementation with a Maroo PCL proxy, configuring a policy, and successfully calling through that registered proxy. The first proxy deployment attempt reverted, so this guide does not claim that step succeeded.
+2. **Not yet verified:** wrapping an implementation with a Maroo PCL proxy, configuring a policy, and successfully calling through that registered proxy. The first proxy deployment attempt reverted, so this guide does not claim that step succeeded. New scripts support these steps but have not yet been run end-to-end on Maroo Testnet.
 
 ## 2. Configure the test network
 
@@ -86,11 +86,11 @@ The documented Transparent proxy flow is broadly:
 
 1. Deploy an implementation contract first.
 2. Encode Transparent proxy initialization data as `abi.encode(logicAddress, initialOwner, initializerCalldata)`. If no initializer is needed, the docs specify `0x` for the initializer calldata.
-3. Call the PCL precompile's `deployPclProxy(Transparent, 0, initData)` on Maroo Testnet. The docs state the immediate caller becomes the initial policy admin; verify this against the currently published API before signing.
+3. Run `npm run deploy:pcl` to simulate and submit `deployPclProxy(Transparent, 0, initData)` on Maroo Testnet. The script uses the documented `abi.encode(logic, initialOwner, initializer)` tuple, with the deployer as `initialOwner` and a no-op initializer. The docs state the immediate caller becomes the initial policy admin.
 4. Read `pclProxy(proxyAddress)` and confirm the returned `kind`, `admin`, and `proxy` match what you expect. Stop if the call reverts or the registry entry is missing.
-5. Use `changeContractPolicies` with the registered proxy address, the current admin, and the exact policy payload/selector required by the selected template. Policy configuration can be replaced by the current admin, so protect that key.
+5. For a demonstration denylist, set `CONTRACT_ADDRESS` to the verified proxy and `DENIED_TEST_ADDRESS` to a disposable test identity, then run `npm run configure:denylist`. This submits the documented `DENYLIST_POLICY` payload at contract scope. Policy configuration can be replaced by the current admin, so protect that key. Verify the stored policy independently before proceeding.
 6. Use `eth_call` to preflight the exact user call through the proxy. Then test both an allowed and a deliberately denied case using disposable test accounts.
-7. Only after both preflight cases make sense, consider sending the test transaction. Inspect the wallet prompt and verify the transaction on Explorer.
+7. Only after both preflight cases make sense, consider sending the test transaction. Inspect the wallet prompt and verify the transaction on Explorer. Any submitted transaction publicly links the signing wallet to its activity.
 
 **Do not copy an unverified ABI from a blog or this project's historical UI.** Use the current official ABI/docs and check `policyTemplate(templateId)` first. The first implementation attempt associated with this project reverted; no PCL proxy or policy is claimed as deployed here.
 
@@ -119,6 +119,8 @@ If deployment or a PCL action reverts:
 - compare every ABI tuple name/order to the current official reference.
 
 Avoid repeatedly resubmitting the same reverting transaction. Diagnose the first failure before trying again.
+
+`npm test` checks that the teaching contract compiles and exposes its documented ABI. This is not an EVM behavioral suite or an end-to-end PCL test; `npm run compile` independently produces the deployable artifact.
 
 ## 10. Airdrop and reward disclaimer
 
