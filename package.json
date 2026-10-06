@@ -10,7 +10,10 @@
   },
   "scripts": {
     "compile": "node scripts/compile.mjs",
+    "test": "node --test",
     "deploy": "npm run compile && node scripts/deploy.mjs",
+    "deploy:pcl": "npm run compile && node scripts/deploy-pcl-proxy.mjs",
+    "configure:denylist": "node scripts/configure-denylist.mjs",
     "record": "node scripts/record-activity.mjs"
   },
   "dependencies": {
