@@ -19,6 +19,9 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "ethers": "^6.15.0",
-    "solc": "^0.8.30"
+    "solc": "^0.8.37"
+  },
+  "overrides": {
+    "tmp": "^0.2.7"
   }
 }
