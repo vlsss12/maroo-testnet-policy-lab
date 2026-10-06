@@ -15,7 +15,8 @@ This is an independent educational project, not an official Maroo repository. It
 - `scripts/deploy-pcl-proxy.mjs` — deploy and verify a Transparent PCL proxy using the documented initializer tuple.
 - `scripts/configure-denylist.mjs` — attach a contract-scope `DENYLIST_POLICY` to a registered proxy.
 - `scripts/verify-pcl-policy.mjs` — read-only `eth_call` checks for allowed and denied test signers.
-- `test/` — local Solidity compile and ABI regression check.
+- `scripts/inspect-pcl.mjs` — read-only PCL template and proxy-registry inspector; needs no wallet.
+- `test/` — local Solidity compile/ABI and mocked read-only inspector checks.
 - `GUIDE.md` — step-by-step setup, deployment, verification, and PCL learning path.
 - `STATUS.md` — an honest record of what was and was not verified.
 
@@ -57,6 +58,8 @@ Always check the chain ID before signing. Do not use a mainnet wallet key or rea
 Maroo documents two tracks: direct calls use the open path; calls made to a PCL-registered proxy use the regulated path and can enforce proxy-bound policies. The PCL path in this project is documented as a **follow-up exercise**, not as a completed deployment. Follow Maroo's current docs and verify the returned proxy registry entry before sending any call.
 
 For the proxy exercise, set `IMPLEMENTATION_ADDRESS` in `.env` and run `npm run deploy:pcl`. For the optional denylist, set `CONTRACT_ADDRESS` to the verified proxy and `DENIED_TEST_ADDRESS` to a disposable test identity, then run `npm run configure:denylist`. These scripts have not yet been executed end-to-end on Maroo Testnet. Any signed transaction publicly links the signer wallet to that activity; only proceed if you accept that exposure.
+
+To inspect the current network without a wallet or transaction, run `npm run inspect:pcl -- DENYLIST_POLICY` and optionally append a proxy address. It reports the official policy-template descriptor and whether the proxy appears in the PCL registry. This is an independent, read-only community utility.
 
 After installing the policy, set `DENIED_TEST_KEY` to the local-only key matching `DENIED_TEST_ADDRESS` and run `npm run verify:pcl`. This performs only `eth_call` simulations: the allowed signer should pass and the denied signer should revert. Never commit or share either test key.
 
