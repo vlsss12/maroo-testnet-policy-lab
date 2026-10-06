@@ -20,7 +20,7 @@ Account identifiers, deployment address, and transaction hashes are deliberately
 - No regulated-path activity call was confirmed for this experiment.
 - The browser-only payment guardrail is a prototype check; it is not PCL enforcement.
 - The new PCL deployment and denylist scripts have not been executed against Maroo Testnet.
-- Automated `npm test` verifies Solidity compilation and ABI shape only; it is not an EVM behavioral suite.
+- Automated `npm test` verifies Solidity compilation/ABI and the read-only inspector against mocked RPC responses; it is not an on-chain EVM/PCL enforcement test.
 
 ## Reward status
 
@@ -28,6 +28,6 @@ No official points or airdrop rule was identified while preparing this repositor
 
 ## Current local checks
 
-- `npm test`: passed (Solidity compilation + ABI regression check).
+- `npm test`: passed (Solidity compile/ABI plus mocked PCL inspector tests).
 - `npm run compile`: passed.
 - Testnet PCL deployment/policy execution: not run; signing would publicly expose the sending wallet's activity.
