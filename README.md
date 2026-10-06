@@ -12,6 +12,9 @@ This is an independent educational project, not an official Maroo repository. It
 - `scripts/compile.mjs` — compile the contract locally with `solc`.
 - `scripts/deploy.mjs` — deploy to Maroo Testnet using a local environment variable.
 - `scripts/record-activity.mjs` — call the contract and wait for confirmation.
+- `scripts/deploy-pcl-proxy.mjs` — deploy and verify a Transparent PCL proxy using the documented initializer tuple.
+- `scripts/configure-denylist.mjs` — attach a contract-scope `DENYLIST_POLICY` to a registered proxy.
+- `test/` — local Solidity compile and ABI regression check.
 - `GUIDE.md` — step-by-step setup, deployment, verification, and PCL learning path.
 - `STATUS.md` — an honest record of what was and was not verified.
 
@@ -24,6 +27,7 @@ npm install
 cp .env.example .env
 # Edit .env locally. Never commit the private key.
 npm run compile
+npm test
 npm run deploy
 ```
 
@@ -50,6 +54,8 @@ Always check the chain ID before signing. Do not use a mainnet wallet key or rea
 ## PCL learning path
 
 Maroo documents two tracks: direct calls use the open path; calls made to a PCL-registered proxy use the regulated path and can enforce proxy-bound policies. The PCL path in this project is documented as a **follow-up exercise**, not as a completed deployment. Follow Maroo's current docs and verify the returned proxy registry entry before sending any call.
+
+For the proxy exercise, set `IMPLEMENTATION_ADDRESS` in `.env` and run `npm run deploy:pcl`. For the optional denylist, set `CONTRACT_ADDRESS` to the verified proxy and `DENIED_TEST_ADDRESS` to a disposable test identity, then run `npm run configure:denylist`. These scripts have not yet been executed end-to-end on Maroo Testnet. Any signed transaction publicly links the signer wallet to that activity; only proceed if you accept that exposure.
 
 - [PCL dual-track model](https://docs.maroo.io/concepts/compliance/pcl-dual-track-model)
 - [`deployPclProxy` API](https://docs.maroo.io/apis/contract/contract-pcl-deploy-pcl-proxy)
