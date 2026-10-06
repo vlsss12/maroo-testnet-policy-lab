@@ -75,6 +75,17 @@ The script checks the network, submits `recordActivity(1)`, waits for the receip
 
 Maroo's docs distinguish direct EVM calls from calls routed through a PCL-registered proxy. A direct call is the open path; contract-specific policy enforcement requires the registered proxy route. A UI-side check or `eth_call` by itself is not proof that an on-chain policy is installed.
 
+### Wallet-free, read-only inspection
+
+Before deploying anything, inspect the live testnet's denylist template and (optionally) a proxy address:
+
+```bash
+npm run inspect:pcl -- DENYLIST_POLICY
+npm run inspect:pcl -- DENYLIST_POLICY 0xYourProxyAddress
+```
+
+This command uses only read calls, validates chain ID `450815`, and does not connect a wallet or submit a transaction. It is also useful for checking whether a proxy is present in the PCL registry.
+
 Read these official references before continuing:
 
 1. [PCL dual-track transaction model](https://docs.maroo.io/concepts/compliance/pcl-dual-track-model)
