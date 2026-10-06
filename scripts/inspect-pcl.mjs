@@ -7,11 +7,32 @@ import { Interface, JsonRpcProvider, isAddress } from 'ethers';
 export const MAROO_CHAIN_ID = 450815n;
 export const PCL_ADDRESS = '0x1000000000000000000000000000000000000005';
 export const PCL_ABI = [
-  'function policyTemplate(string templateId) view returns ((string templateId, string name, string description, bytes paramSchema))',
   'function pclProxy(address proxy) view returns ((uint8 kind, address admin, address proxy))',
 ];
 
 const pclInterface = new Interface(PCL_ABI);
+const templateInterfaces = [
+  new Interface(['function policyTemplate(string templateId) view returns ((string templateId, string name, string description, bytes paramSchema))']),
+  new Interface(['function policyTemplate(string templateId) view returns ((string templateId, string name, string description))']),
+];
+
+export function decodeTemplateResult(data) {
+  for (const iface of templateInterfaces) {
+    try {
+      const [entry] = iface.decodeFunctionResult('policyTemplate', data);
+      const templateId = entry[0];
+      const name = entry[1];
+      const description = entry[2];
+      const paramSchema = entry.length > 3 ? entry[3] : undefined;
+      if (typeof templateId === 'string' && typeof name === 'string' && typeof description === 'string') {
+        return { templateId, name, description, paramSchema };
+      }
+    } catch {
+      // Deployed testnet versions may predate the documented paramSchema field.
+    }
+  }
+  throw new Error('The PCL template response did not match a supported documented ABI shape.');
+}
 
 /** Read PCL template metadata and, optionally, check a proxy registration. Never signs or sends a transaction. */
 export async function inspectPcl({ provider, templateId, proxyAddress }) {
@@ -23,9 +44,9 @@ export async function inspectPcl({ provider, templateId, proxyAddress }) {
     throw new Error(`Wrong network: expected Maroo Testnet (${MAROO_CHAIN_ID}), received ${network.chainId}.`);
   }
 
-  const templateCall = pclInterface.encodeFunctionData('policyTemplate', [templateId.trim()]);
+  const templateCall = templateInterfaces[0].encodeFunctionData('policyTemplate', [templateId.trim()]);
   const templateResult = await provider.call({ to: PCL_ADDRESS, data: templateCall });
-  const [template] = pclInterface.decodeFunctionResult('policyTemplate', templateResult);
+  const template = decodeTemplateResult(templateResult);
 
   const result = {
     chainId: network.chainId.toString(),
@@ -33,7 +54,7 @@ export async function inspectPcl({ provider, templateId, proxyAddress }) {
       id: template.templateId,
       name: template.name,
       description: template.description,
-      schemaBytes: (template.paramSchema.length - 2) / 2,
+      schemaBytes: template.paramSchema === undefined ? null : (template.paramSchema.length - 2) / 2,
     },
   };
 
@@ -43,7 +64,7 @@ export async function inspectPcl({ provider, templateId, proxyAddress }) {
     const [entry] = pclInterface.decodeFunctionResult('pclProxy', proxyResult);
     result.proxy = {
       address: proxyAddress,
-      registered: entry.proxy.toLowerCase() === proxyAddress.toLowerCase(),
+      registered: [1, 2, 3].includes(Number(entry.kind)) && entry.proxy.toLowerCase() === proxyAddress.toLowerCase(),
       kind: Number(entry.kind),
       kindName: ({ 1: 'Transparent', 2: 'UUPS', 3: 'Beacon' })[Number(entry.kind)] ?? 'Unknown',
     };
